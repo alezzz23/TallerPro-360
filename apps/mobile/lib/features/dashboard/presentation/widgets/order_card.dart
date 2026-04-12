@@ -50,6 +50,10 @@ class OrderCard extends StatelessWidget {
   Widget _buildCard(BuildContext context, {required bool interactive}) {
     final theme = Theme.of(context);
     final accentColor = AppTheme.statusColor(order.status.apiValue);
+    final surfaceTint = Color.alphaBlend(
+      accentColor.withValues(alpha: 0.08),
+      theme.colorScheme.surface,
+    );
     final showReceptionIndicator =
         order.status == DashboardStatus.recepcion || !order.receptionComplete;
 
@@ -60,6 +64,7 @@ class OrderCard extends StatelessWidget {
         onTap: interactive ? onTap : null,
         child: Container(
           decoration: BoxDecoration(
+            color: surfaceTint,
             border: Border(left: BorderSide(color: accentColor, width: 5)),
           ),
           padding: const EdgeInsets.all(14),
@@ -110,6 +115,11 @@ class OrderCard extends StatelessWidget {
                 runSpacing: 8,
                 children: [
                   _MetaPill(
+                    icon: Icons.flag_outlined,
+                    label: order.status.label,
+                    color: accentColor,
+                  ),
+                  _MetaPill(
                     icon: Icons.confirmation_number_outlined,
                     label: '#${order.shortOrderId}',
                     color: theme.colorScheme.primary,
@@ -130,6 +140,17 @@ class OrderCard extends StatelessWidget {
                       color: order.receptionComplete
                           ? Colors.green.shade700
                           : theme.colorScheme.error,
+                    ),
+                  if (order.quotationStatus != null &&
+                      order.status == DashboardStatus.aprobacion)
+                    _MetaPill(
+                      icon: order.quotationStatus == DashboardQuotationStatus.rechazada
+                          ? Icons.warning_amber_rounded
+                          : Icons.mark_chat_unread_outlined,
+                      label: order.quotationStatus!.label,
+                      color: order.quotationStatus == DashboardQuotationStatus.rechazada
+                          ? theme.colorScheme.error
+                          : accentColor,
                     ),
                   if (order.technicianIds.isNotEmpty)
                     _MetaPill(

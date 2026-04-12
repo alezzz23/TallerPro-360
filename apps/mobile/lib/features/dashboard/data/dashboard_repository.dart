@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:drift/drift.dart';
 
+import '../../../../core/database/app_database.dart';
 import '../domain/dashboard_order.dart';
 import '../domain/dashboard_transition.dart';
 
@@ -13,9 +16,10 @@ class DashboardException implements Exception {
 }
 
 class DashboardRepository {
-  DashboardRepository(this._dio);
+  DashboardRepository(this._dio, [this._cache]);
 
   final Dio _dio;
+  final CachedOrdersDao? _cache;
 
   Future<List<DashboardOrder>> fetchDashboardOrders() async {
     try {
@@ -39,16 +43,34 @@ class DashboardRepository {
       );
       final findingsByOrder = Map<String, List<_FindingDto>>.fromEntries(findingsEntries);
 
+      final quotationEntries = await Future.wait(
+        orders.map((order) async {
+          final quotation = switch (order.status) {
+            DashboardStatus.diagnostico || DashboardStatus.aprobacion =>
+              await _fetchQuotation(order.id),
+            _ => null,
+          };
+          return MapEntry(order.id, quotation);
+        }),
+      );
+      final quotationsByOrder = Map<String, _QuotationDto?>.fromEntries(quotationEntries);
+
       final dashboardOrders = orders
           .map((order) {
             final vehicle = vehiclesById[order.vehicleId];
             final customer = vehicle == null ? null : customersById[vehicle.customerId];
             final findings = findingsByOrder[order.id] ?? const <_FindingDto>[];
+            final quotation = quotationsByOrder[order.id];
+            final boardStatus = DashboardBoardStatusResolver.resolve(
+              backendStatus: order.status,
+              quotationStatus: quotation?.status,
+            );
             return DashboardOrder(
               orderId: order.id,
               vehicleId: order.vehicleId,
               advisorId: order.advisorId,
-              status: order.status,
+              backendStatus: order.status,
+              status: boardStatus,
               fechaIngreso: order.fechaIngreso,
               motivoIngreso: order.motivoIngreso,
               receptionComplete: order.receptionComplete,
@@ -56,6 +78,8 @@ class DashboardRepository {
               marca: vehicle?.marca,
               modelo: vehicle?.modelo,
               customerName: customer?.nombre,
+              quotationId: quotation?.id,
+              quotationStatus: quotation?.status,
               technicianIds: [
                 for (final finding in findings) finding.technicianId,
               ],
@@ -64,8 +88,33 @@ class DashboardRepository {
           .toList(growable: false)
         ..sort((left, right) => left.fechaIngreso.compareTo(right.fechaIngreso));
 
+      // Persist result to local cache for offline use
+      if (_cache != null) {
+        final now = DateTime.now().toUtc();
+        await _cache.upsertOrders([
+          for (final order in dashboardOrders)
+            CachedOrdersCompanion.insert(
+              orderId: order.orderId,
+              jsonBlob: jsonEncode(order.toJson()),
+              cachedAt: now,
+            ),
+        ]);
+      }
+
       return dashboardOrders;
     } on DioException catch (error) {
+      // Try serving from cache when offline or network error
+      if (_cache != null) {
+        final cached = await _cache.allCachedOrders();
+        if (cached.isNotEmpty) {
+          return cached
+              .map((row) => DashboardOrder.fromJson(
+                    jsonDecode(row.jsonBlob) as Map<String, dynamic>,
+                  ))
+              .toList(growable: false)
+            ..sort((a, b) => a.fechaIngreso.compareTo(b.fechaIngreso));
+        }
+      }
       throw DashboardException(
         _extractErrorMessage(
           error,
@@ -78,6 +127,7 @@ class DashboardRepository {
   Future<String> moveOrder({
     required DashboardOrder order,
     required DashboardStatus targetStatus,
+    required String? currentUserId,
   }) async {
     final policy = DashboardTransitionHelper.policyFor(
       from: order.status,
@@ -94,8 +144,24 @@ class DashboardRepository {
           await _dio.put('/orders/${order.orderId}/advance');
           break;
         case DashboardTransitionAction.approveQuotation:
-          final quotationId = await _fetchQuotationId(order.orderId);
+          final quotationId = order.quotationId ?? await _fetchQuotationId(order.orderId);
           await _dio.post('/quotations/$quotationId/approve');
+          break;
+        case DashboardTransitionAction.startQc:
+          final inspectorId = _readString(currentUserId);
+          if (inspectorId == null) {
+            throw const DashboardException(
+              'No se pudo identificar al inspector para iniciar Control de Calidad.',
+            );
+          }
+          await _dio.post(
+            '/orders/${order.orderId}/qc',
+            data: {
+              'inspector_id': inspectorId,
+              'items_verificados': <String, dynamic>{},
+              'aprobado': true,
+            },
+          );
           break;
         case DashboardTransitionAction.approveQc:
           await _dio.put('/orders/${order.orderId}/qc/approve');
@@ -236,6 +302,23 @@ class DashboardRepository {
         .toList(growable: false);
   }
 
+  Future<_QuotationDto?> _fetchQuotation(String orderId) async {
+    try {
+      final response = await _dio.get('/orders/$orderId/quotation');
+      return _QuotationDto.fromJson(_asMap(response.data));
+    } on DioException catch (error) {
+      if (error.response?.statusCode == 404) {
+        return null;
+      }
+      throw DashboardException(
+        _extractErrorMessage(
+          error,
+          fallback: 'No se pudo recuperar la cotización de la orden.',
+        ),
+      );
+    }
+  }
+
   Future<String> _fetchQuotationId(String orderId) async {
     final response = await _dio.get('/orders/$orderId/quotation');
     final data = _asMap(response.data);
@@ -344,6 +427,25 @@ class _FindingDto {
   factory _FindingDto.fromJson(Map<String, dynamic> json) {
     return _FindingDto(
       technicianId: _requireString(json['technician_id'], field: 'technician_id'),
+    );
+  }
+}
+
+class _QuotationDto {
+  const _QuotationDto({
+    required this.id,
+    required this.status,
+  });
+
+  final String id;
+  final DashboardQuotationStatus status;
+
+  factory _QuotationDto.fromJson(Map<String, dynamic> json) {
+    return _QuotationDto(
+      id: _requireString(json['id'], field: 'id'),
+      status: DashboardQuotationStatus.fromApi(
+        _requireString(json['estado'], field: 'estado'),
+      ),
     );
   }
 }

@@ -21,6 +21,7 @@ class FindingCreate(BaseModel):
 
 
 class FindingUpdate(BaseModel):
+    technician_id: uuid.UUID | None = None
     descripcion: str | None = None
     tiempo_estimado: float | None = None
     es_critico_seguridad: bool | None = None

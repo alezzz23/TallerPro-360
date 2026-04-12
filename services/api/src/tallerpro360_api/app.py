@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
+from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session, text
 
 from .config import settings
@@ -20,6 +21,7 @@ from .routers import (
     findings_router,
     orders_router,
     quotations_router,
+    uploads_router,
     users_router,
     vehicles_router,
 )
@@ -41,6 +43,12 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     app = FastAPI(title=settings.app_name, lifespan=lifespan)
+    settings.media_dir.mkdir(parents=True, exist_ok=True)
+    app.mount(
+        settings.media_url_path,
+        StaticFiles(directory=str(settings.media_dir)),
+        name="media",
+    )
 
     # WebSocket router — no prefix so final URL is /ws
     app.include_router(ws_router)
@@ -51,6 +59,7 @@ def create_app() -> FastAPI:
     app.include_router(findings_router, prefix=settings.api_prefix)
     app.include_router(orders_router, prefix=settings.api_prefix)
     app.include_router(quotations_router, prefix=settings.api_prefix)
+    app.include_router(uploads_router, prefix=settings.api_prefix)
     app.include_router(vehicles_router, prefix=settings.api_prefix)
     app.include_router(users_router, prefix=settings.api_prefix)
     app.include_router(audit_router, prefix=settings.api_prefix)

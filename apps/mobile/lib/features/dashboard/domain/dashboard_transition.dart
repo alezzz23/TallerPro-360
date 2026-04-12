@@ -3,6 +3,7 @@ import 'dashboard_order.dart';
 enum DashboardTransitionAction {
   advanceReception,
   approveQuotation,
+  startQc,
   approveQc,
 }
 
@@ -41,6 +42,13 @@ class DashboardTransitionHelper {
       successMessage: 'Cotización aprobada. La orden pasó a Reparación.',
     ),
     DashboardTransitionPolicy(
+      action: DashboardTransitionAction.startQc,
+      from: DashboardStatus.reparacion,
+      to: DashboardStatus.qc,
+      allowedRoles: {'TECNICO', 'JEFE_TALLER', 'ADMIN'},
+      successMessage: 'Orden enviada a Control de Calidad.',
+    ),
+    DashboardTransitionPolicy(
       action: DashboardTransitionAction.approveQc,
       from: DashboardStatus.qc,
       to: DashboardStatus.entrega,
@@ -63,33 +71,41 @@ class DashboardTransitionHelper {
 
   static bool canStartDrag({
     required String? role,
-    required DashboardStatus from,
+    required DashboardOrder order,
   }) {
     if (role == null) {
       return false;
     }
     return _policies.any(
-      (policy) => policy.from == from && policy.allowedRoles.contains(role),
+      (policy) =>
+          policy.from == order.status &&
+          policy.allowedRoles.contains(role) &&
+          _preconditionFailure(policy: policy, order: order) == null,
     );
   }
 
   static bool canDrop({
     required String? role,
-    required DashboardStatus from,
+    required DashboardOrder order,
     required DashboardStatus to,
   }) {
-    final policy = policyFor(from: from, to: to);
+    final policy = policyFor(from: order.status, to: to);
     if (policy == null || role == null) {
       return false;
     }
-    return policy.allowedRoles.contains(role);
+    if (!policy.allowedRoles.contains(role)) {
+      return false;
+    }
+    return _preconditionFailure(policy: policy, order: order) == null;
   }
 
   static String? rejectionReason({
     required String? role,
-    required DashboardStatus from,
+    required DashboardOrder order,
     required DashboardStatus to,
   }) {
+    final from = order.status;
+
     if (from == to) {
       return 'La orden ya está en esta fase.';
     }
@@ -103,6 +119,26 @@ class DashboardTransitionHelper {
       return 'Tu rol no puede mover esta orden.';
     }
 
-    return null;
+    return _preconditionFailure(policy: policy, order: order);
+  }
+
+  static String? _preconditionFailure({
+    required DashboardTransitionPolicy policy,
+    required DashboardOrder order,
+  }) {
+    switch (policy.action) {
+      case DashboardTransitionAction.approveQuotation:
+        if (order.quotationStatus == DashboardQuotationStatus.pendiente) {
+          return null;
+        }
+        if (order.quotationStatus == DashboardQuotationStatus.rechazada) {
+          return 'La cotización fue rechazada. Reenvíala antes de pasar a Reparación.';
+        }
+        return 'Primero debes generar una cotización pendiente para pasar a Reparación.';
+      case DashboardTransitionAction.advanceReception:
+      case DashboardTransitionAction.startQc:
+      case DashboardTransitionAction.approveQc:
+        return null;
+    }
   }
 }

@@ -1,4 +1,9 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+_BASE_DIR = Path(__file__).resolve().parents[2]
 
 
 class Settings(BaseSettings):
@@ -8,6 +13,9 @@ class Settings(BaseSettings):
     database_url: str = "postgresql://tallerpro360:tallerpro360@localhost:5432/tallerpro360"
     secret_key: str = "change-me-in-production"
     access_token_expire_minutes: int = 1440
+    media_dir: Path = _BASE_DIR / "media"
+    media_url_path: str = "/media"
+    max_upload_size_bytes: int = 10 * 1024 * 1024
 
     model_config = SettingsConfigDict(
         env_file=".env",

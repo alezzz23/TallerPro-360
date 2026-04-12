@@ -36,7 +36,7 @@ class KanbanColumn extends StatelessWidget {
         final candidate = details.data;
         return DashboardTransitionHelper.canDrop(
           role: currentRole,
-          from: candidate.status,
+          order: candidate,
           to: status,
         );
       },
@@ -122,7 +122,7 @@ class KanbanColumn extends StatelessWidget {
                             order: order,
                             draggable: DashboardTransitionHelper.canStartDrag(
                               role: currentRole,
-                              from: order.status,
+                              order: order,
                             ),
                             onTap: () => onOpenOrder(order),
                             onRejectedDrop: () => onRejectedDrop(order),

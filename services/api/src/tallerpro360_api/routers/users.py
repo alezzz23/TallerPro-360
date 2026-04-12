@@ -10,12 +10,21 @@ from sqlmodel import Session, select
 from ..database import get_session
 from ..dependencies import get_current_active_user, require_roles
 from ..models.user import User, UserRole
-from ..schemas.users import UserListResponse, UserResponse, UserUpdate
+from ..schemas.users import (
+    TechnicianDirectoryItem,
+    UserListResponse,
+    UserResponse,
+    UserUpdate,
+)
 
 router = APIRouter(prefix="/users", tags=["users"])
 
 SessionDep = Annotated[Session, Depends(get_session)]
 AdminOnly = Annotated[User, Depends(require_roles(UserRole.ADMIN))]
+OperationalUser = Annotated[
+    User,
+    Depends(require_roles(UserRole.ASESOR, UserRole.TECNICO, UserRole.JEFE_TALLER, UserRole.ADMIN)),
+]
 
 
 @router.get("/", response_model=UserListResponse)
@@ -28,6 +37,19 @@ def list_users(
     total = session.exec(select(func.count()).select_from(User)).one()
     items = session.exec(select(User).offset(offset).limit(limit)).all()
     return UserListResponse(items=list(items), total=total, limit=limit, offset=offset)
+
+
+@router.get("/technicians", response_model=list[TechnicianDirectoryItem])
+def list_technicians(
+    session: SessionDep,
+    _current_user: OperationalUser,
+) -> list[TechnicianDirectoryItem]:
+    technicians = session.exec(
+        select(User)
+        .where(User.rol == UserRole.TECNICO, User.activo.is_(True))
+        .order_by(User.nombre)
+    ).all()
+    return [TechnicianDirectoryItem.model_validate(technician) for technician in technicians]
 
 
 @router.get("/{user_id}", response_model=UserResponse)

@@ -40,10 +40,11 @@ class DashboardController extends StateNotifier<AsyncValue<DashboardState>> {
     required DashboardOrder order,
     required DashboardStatus targetStatus,
     required String? currentRole,
+    required String? currentUserId,
   }) async {
     final rejection = DashboardTransitionHelper.rejectionReason(
       role: currentRole,
-      from: order.status,
+      order: order,
       to: targetStatus,
     );
 
@@ -54,6 +55,7 @@ class DashboardController extends StateNotifier<AsyncValue<DashboardState>> {
     final message = await _repository.moveOrder(
       order: order,
       targetStatus: targetStatus,
+      currentUserId: currentUserId,
     );
     await refresh(silent: true);
     return message;

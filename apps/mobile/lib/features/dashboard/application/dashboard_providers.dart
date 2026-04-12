@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/database/app_database.dart';
 import '../../auth/domain/auth_state.dart';
 import '../data/dashboard_repository.dart';
 import '../data/notification_service.dart';
@@ -11,7 +12,8 @@ import 'dashboard_controller.dart';
 
 final dashboardRepositoryProvider = Provider<DashboardRepository>((ref) {
   final dio = ref.watch(appDioProvider);
-  return DashboardRepository(dio);
+  final cache = ref.watch(cachedOrdersDaoProvider);
+  return DashboardRepository(dio, cache);
 });
 
 class DashboardFilterNotifier extends Notifier<DashboardFilterState> {

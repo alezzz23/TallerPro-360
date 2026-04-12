@@ -12,7 +12,7 @@ class AppColors {
   static const Color statusInProgress = Color(0xFFEE9B00);  // DIAGNOSTICO, REPARACION, QC
   static const Color statusReady = Color(0xFF2DC653);        // ENTREGA, CERRADA
   static const Color statusRejected = Color(0xFFAE2012);     // RECHAZADA
-  static const Color statusApproval = Color(0xFF94D2BD);     // APROBACION
+  static const Color statusApproval = Color(0xFFD98E04);     // APROBACION
 
   static const Color surface = Color(0xFFF8F9FA);
   static const Color onSurface = Color(0xFF212529);
@@ -23,6 +23,7 @@ class AppTheme {
 
   static ThemeData get light => ThemeData(
     useMaterial3: true,
+    scaffoldBackgroundColor: const Color(0xFFF2F5F7),
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.primary,
       brightness: Brightness.light,
@@ -38,15 +39,23 @@ class AppTheme {
       elevation: 0,
     ),
     cardTheme: CardTheme(
-      elevation: 2,
+      elevation: 0,
+      surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       filled: true,
+      fillColor: Colors.white,
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
+        minimumSize: const Size.fromHeight(48),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
         minimumSize: const Size.fromHeight(48),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),

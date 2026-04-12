@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/sync/widgets/sync_status_banner.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/extensions.dart';
 import '../../../shared/widgets/empty_state_widget.dart';
 import '../../../shared/widgets/loading_widget.dart';
@@ -20,6 +22,7 @@ class DashboardPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
     final role = authState.rol;
+    final userId = authState.userId;
     final subtitle = _subtitleForRole(role);
     final unreadCount = ref.watch(dashboardUnreadCountProvider);
     final notificationService = ref.watch(dashboardNotificationServiceProvider);
@@ -76,6 +79,13 @@ class DashboardPage extends ConsumerWidget {
           ),
         ],
       ),
+      floatingActionButton: _canStartReception(role)
+          ? FloatingActionButton.extended(
+              onPressed: () => context.pushNamed('reception'),
+              icon: const Icon(Icons.add_road_rounded),
+              label: const Text('Nueva recepcion'),
+            )
+          : null,
       body: SafeArea(
         child: dashboardAsync.when(
           loading: () => const LoadingWidget(
@@ -93,6 +103,7 @@ class DashboardPage extends ConsumerWidget {
           data: (state) {
             return Column(
               children: [
+                const SyncStatusBanner(),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: DashboardFilterBar(
@@ -119,6 +130,10 @@ class DashboardPage extends ConsumerWidget {
                       ref.read(dashboardFilterProvider.notifier).clearAll();
                     },
                   ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: _BoardLegend(),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
@@ -164,13 +179,14 @@ class DashboardPage extends ConsumerWidget {
                               order,
                               targetStatus,
                               role,
+                              userId,
                             );
                           },
                           onOpenOrder: (order) => _openOrder(context, order),
                           onRejectedDrop: (order) {
                             _showSnackBar(
                               context,
-                              'Movimiento no soportado en esta fase.',
+                              'No puedes mover esta orden a esa fase desde el tablero.',
                             );
                           },
                         ),
@@ -207,6 +223,7 @@ class DashboardPage extends ConsumerWidget {
     DashboardOrder order,
     DashboardStatus targetStatus,
     String? currentRole,
+    String? currentUserId,
   ) async {
     try {
       final message =
@@ -214,6 +231,7 @@ class DashboardPage extends ConsumerWidget {
                 order: order,
                 targetStatus: targetStatus,
                 currentRole: currentRole,
+                currentUserId: currentUserId,
               );
       if (!context.mounted) {
         return;
@@ -230,7 +248,10 @@ class DashboardPage extends ConsumerWidget {
   static void _openOrder(BuildContext context, DashboardOrder order) {
     switch (order.status) {
       case DashboardStatus.recepcion:
-        context.pushNamed('reception');
+        context.pushNamed(
+          'reception',
+          queryParameters: {'orderId': order.orderId},
+        );
         break;
       case DashboardStatus.diagnostico:
         context.pushNamed(
@@ -285,6 +306,11 @@ class DashboardPage extends ConsumerWidget {
         'JEFE_TALLER' => 'Vista de jefatura de taller',
         'ADMIN' => 'Vista administrativa',
         _ => 'Tablero operativo',
+      };
+
+  static bool _canStartReception(String? role) => switch (role) {
+        'ASESOR' || 'JEFE_TALLER' || 'ADMIN' => true,
+        _ => false,
       };
 }
 
@@ -398,6 +424,78 @@ class _NotificationActionButton extends StatelessWidget {
                 ),
               ),
             ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BoardLegend extends StatelessWidget {
+  const _BoardLegend();
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: const [
+        _LegendChip(label: 'Pendiente', color: AppColors.statusPending),
+        _LegendChip(label: 'En proceso', color: AppColors.statusInProgress),
+        _LegendChip(label: 'Listo', color: AppColors.statusReady),
+        _LegendChip(
+          label: 'Mantén presionado para mover',
+          color: AppColors.secondary,
+          icon: Icons.pan_tool_alt_rounded,
+        ),
+      ],
+    );
+  }
+}
+
+class _LegendChip extends StatelessWidget {
+  const _LegendChip({
+    required this.label,
+    required this.color,
+    this.icon,
+  });
+
+  final String label;
+  final Color color;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 14, color: color),
+            const SizedBox(width: 6),
+          ],
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ],
       ),
     );

@@ -75,6 +75,17 @@ JefeOrAbove = Annotated[
 _ALL_ANGULOS = set(AnguloFoto)
 
 
+def _require_active_technician(session: Session, technician_id: uuid.UUID) -> None:
+    technician = session.get(User, technician_id)
+    if technician is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Technician not found")
+    if technician.rol != UserRole.TECNICO or not technician.activo:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Assigned technician must be active and have TECNICO role",
+        )
+
+
 def _finding_response(finding: DiagnosticFinding, session: Session) -> FindingResponse:
     fotos: list[str] = json.loads(finding.fotos) if finding.fotos else []
     parts = session.exec(select(Part).where(Part.finding_id == finding.id)).all()
@@ -486,6 +497,7 @@ def create_finding(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Order is in estado {order.estado}, must be DIAGNOSTICO to add findings",
         )
+    _require_active_technician(session, payload.technician_id)
     finding = DiagnosticFinding(
         order_id=order_id,
         technician_id=payload.technician_id,

@@ -21,6 +21,11 @@ dependencies:
   # HTTP client
   dio: ^5.8.0+1
 
+  # Media and capture
+  image_picker: ^1.1.2
+  signature: ^5.5.0
+  speech_to_text: ^7.0.0
+
   # Secure storage (JWT)
   flutter_secure_storage: ^9.2.4
 
@@ -30,8 +35,14 @@ dependencies:
   path_provider: ^2.1.5
   path: ^1.9.0
 
+  # Connectivity
+  connectivity_plus: ^6.1.1
+
   # Freezed annotation
   freezed_annotation: ^2.4.4
+
+  # Internationalisation / number formatting
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:

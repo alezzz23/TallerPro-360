@@ -4,13 +4,14 @@ import uuid
 from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from sqlmodel import Session, select
 
 from ..database import get_session
 from ..dependencies import get_current_active_user, require_roles
 from ..models.customer import Customer
 from ..models.user import User, UserRole
+from ..search import build_prefix_search_pattern
 from ..schemas.customers import (
     CustomerCreate,
     CustomerListResponse,
@@ -22,6 +23,36 @@ router = APIRouter(prefix="/customers", tags=["customers"])
 
 SessionDep = Annotated[Session, Depends(get_session)]
 CurrentUser = Annotated[User, Depends(get_current_active_user)]
+
+
+def _customer_search_filters(
+    q: Optional[str],
+    nombre: Optional[str],
+    telefono: Optional[str],
+    email: Optional[str],
+    whatsapp: Optional[str],
+):
+    filters = []
+
+    if q_pattern := build_prefix_search_pattern(q):
+        filters.append(
+            or_(
+                Customer.nombre.ilike(q_pattern, escape="\\"),
+                Customer.telefono.ilike(q_pattern, escape="\\"),
+                Customer.email.ilike(q_pattern, escape="\\"),
+                Customer.whatsapp.ilike(q_pattern, escape="\\"),
+            )
+        )
+    if nombre_pattern := build_prefix_search_pattern(nombre):
+        filters.append(Customer.nombre.ilike(nombre_pattern, escape="\\"))
+    if telefono_pattern := build_prefix_search_pattern(telefono):
+        filters.append(Customer.telefono.ilike(telefono_pattern, escape="\\"))
+    if email_pattern := build_prefix_search_pattern(email):
+        filters.append(Customer.email.ilike(email_pattern, escape="\\"))
+    if whatsapp_pattern := build_prefix_search_pattern(whatsapp):
+        filters.append(Customer.whatsapp.ilike(whatsapp_pattern, escape="\\"))
+
+    return filters
 
 
 @router.post("/", response_model=CustomerResponse, status_code=status.HTTP_201_CREATED)
@@ -43,9 +74,28 @@ def list_customers(
     _: CurrentUser,
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
+    q: Optional[str] = Query(None),
+    nombre: Optional[str] = Query(None),
+    telefono: Optional[str] = Query(None),
+    email: Optional[str] = Query(None),
+    whatsapp: Optional[str] = Query(None),
 ):
-    total = session.exec(select(func.count()).select_from(Customer)).one()
-    items = session.exec(select(Customer).offset(offset).limit(limit)).all()
+    query = select(Customer)
+    count_query = select(func.count()).select_from(Customer)
+
+    filters = _customer_search_filters(
+        q=q,
+        nombre=nombre,
+        telefono=telefono,
+        email=email,
+        whatsapp=whatsapp,
+    )
+    if filters:
+        query = query.where(*filters)
+        count_query = count_query.where(*filters)
+
+    total = session.exec(count_query).one()
+    items = session.exec(query.offset(offset).limit(limit)).all()
     return CustomerListResponse(items=list(items), total=total, limit=limit, offset=offset)
 
 

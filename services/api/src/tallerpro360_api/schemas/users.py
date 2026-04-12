@@ -20,6 +20,13 @@ class UserResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class TechnicianDirectoryItem(BaseModel):
+    id: uuid.UUID
+    nombre: str
+
+    model_config = {"from_attributes": True}
+
+
 class UserUpdate(BaseModel):
     nombre: Optional[str] = None
     activo: Optional[bool] = None

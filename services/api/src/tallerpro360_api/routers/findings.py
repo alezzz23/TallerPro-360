@@ -39,6 +39,17 @@ AsesorTecnicoOrAbove = Annotated[
 ]
 
 
+def _require_active_technician(session: Session, technician_id: uuid.UUID) -> None:
+    technician = session.get(User, technician_id)
+    if technician is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Technician not found")
+    if technician.rol != UserRole.TECNICO or not technician.activo:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Assigned technician must be active and have TECNICO role",
+        )
+
+
 def _finding_response(finding: DiagnosticFinding, session: Session) -> FindingResponse:
     fotos: list[str] = json.loads(finding.fotos) if finding.fotos else []
     parts = session.exec(
@@ -82,6 +93,14 @@ def update_finding(
     if finding is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Finding not found")
     data = payload.model_dump(exclude_unset=True)
+    if "technician_id" in data:
+        technician_id = data["technician_id"]
+        if technician_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="technician_id cannot be null",
+            )
+        _require_active_technician(session, technician_id)
     for k, v in data.items():
         setattr(finding, k, v)
     session.add(finding)

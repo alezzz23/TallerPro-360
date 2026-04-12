@@ -71,7 +71,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.reception,
         name: 'reception',
-        builder: (_, __) => const ReceptionPage(),
+        builder: (_, state) => ReceptionPage(
+          initialOrderId: state.uri.queryParameters['orderId'],
+        ),
       ),
       GoRoute(
         path: AppRoutes.diagnosis,
