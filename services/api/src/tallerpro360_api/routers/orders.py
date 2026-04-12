@@ -122,8 +122,26 @@ def _quotation_response(quotation: Quotation, session: Session) -> QuotationResp
     )
 
 
+def _load_qc_items(items_verificados: str | None) -> dict[str, object]:
+    if not items_verificados:
+        return {}
+
+    try:
+        parsed_items = json.loads(items_verificados)
+    except json.JSONDecodeError:
+        return {}
+
+    if isinstance(parsed_items, dict):
+        return parsed_items
+    if isinstance(parsed_items, list):
+        return {str(item): True for item in parsed_items}
+    if isinstance(parsed_items, str) and parsed_items:
+        return {parsed_items: True}
+    return {}
+
+
 def _qc_response(qc: QualityCheck, order: ServiceOrder) -> QCResponse:
-    items_dict: dict = json.loads(qc.items_verificados) if qc.items_verificados else {}
+    items_dict = _load_qc_items(qc.items_verificados)
     km_delta: int | None = None
     if qc.kilometraje_salida is not None and order.kilometraje_ingreso is not None:
         km_delta = qc.kilometraje_salida - order.kilometraje_ingreso

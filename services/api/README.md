@@ -39,6 +39,27 @@ El contenedor escribe logs JSON a stdout, expone un health check en `/health` y 
 
 En compose local se deja `RUN_DB_MIGRATIONS=false` porque el entorno de desarrollo sigue usando `AUTO_CREATE_TABLES=true`.
 
+## Seeder demo
+
+```bash
+uv run seed-tallerpro360
+```
+
+El seeder es idempotente y crea usuarios demo, clientes, vehiculos, citas, ordenes, cotizaciones, QC, factura y NPS.
+
+Credenciales por defecto:
+
+- `admin@demo.tallerpro360.com` / `TallerPro360!2026`
+- `asesor@demo.tallerpro360.com` / `TallerPro360!2026`
+- `tecnico@demo.tallerpro360.com` / `TallerPro360!2026`
+- `jefe@demo.tallerpro360.com` / `TallerPro360!2026`
+
+Si necesitas otra clave para todos los usuarios demo:
+
+```bash
+uv run seed-tallerpro360 --password 'OtraClaveSegura123!'
+```
+
 ## Alertas
 
 El workflow `Backend Health Monitor` consulta `BACKEND_HEALTHCHECK_URL/health` y `BACKEND_HEALTHCHECK_URL/metrics` cada 15 minutos. Si alguna verificacion falla, GitHub Actions marca el workflow como fallido y usa las notificaciones nativas de GitHub como superficie de alerta.

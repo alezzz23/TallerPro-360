@@ -24,6 +24,7 @@ dependencies = [
 
 [project.scripts]
 tallerpro360-api = "tallerpro360_api:main"
+seed-tallerpro360 = "tallerpro360_api.seed:main"
 
 [dependency-groups]
 dev = [
