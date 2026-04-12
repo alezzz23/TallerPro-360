@@ -1,4 +1,4 @@
-name: Deploy Backend to Railway
+name: Backend Checks on Main
 
 on:
   push:
@@ -7,12 +7,12 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: deploy-backend-${{ github.ref }}
+  group: backend-checks-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   backend-checks:
-    name: Backend checks before deploy
+    name: Backend checks before Railway auto-deploy
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -39,29 +39,3 @@ jobs:
 
       - name: Run pytest
         run: uv run pytest
-
-  deploy:
-    name: Deploy services/api to Railway
-    needs: backend-checks
-    runs-on: ubuntu-latest
-    environment: production
-    defaults:
-      run:
-        working-directory: services/api
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install Railway CLI
-        run: npm install --global @railway/cli
-
-      - name: Deploy backend
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
-        run: railway up --service "$RAILWAY_SERVICE"

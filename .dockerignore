@@ -1,0 +1,13 @@
+*
+!services/
+!services/api/
+!services/api/README.md
+!services/api/alembic.ini
+!services/api/pyproject.toml
+!services/api/uv.lock
+!services/api/alembic/
+!services/api/alembic/**
+!services/api/scripts/
+!services/api/scripts/**
+!services/api/src/
+!services/api/src/**
