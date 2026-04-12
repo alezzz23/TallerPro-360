@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: tallerpro360-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tallerpro360
+      POSTGRES_USER: tallerpro360
+      POSTGRES_PASSWORD: tallerpro360
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
