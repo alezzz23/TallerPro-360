@@ -15,7 +15,6 @@ from ..models.quotation_item import QuotationItem
 from ..models.service_order import OrderStatus, ServiceOrder
 from ..models.user import User, UserRole
 from ..schemas.quotations import (
-    QuotationCreate,
     QuotationDiscountUpdate,
     QuotationItemResponse,
     QuotationRejectBody,

@@ -251,22 +251,22 @@
 ## FASE 8 — DevOps y Despliegue
 
 ### 8.1 CI/CD
-- [ ] GitHub Actions: lint + test en cada PR
-- [ ] Build automático de APK/IPA en merge a main
-- [ ] Deploy automático del backend a staging
+- [x] GitHub Actions: lint + test en cada PR
+- [x] Build automático de APK/IPA en merge a main
+- [x] Deploy automático del backend a staging
 
 ### 8.2 Infraestructura de Producción
-- [ ] Dockerizar el backend FastAPI
-- [ ] Agregar servicio de backend al `compose.yml`
-- [ ] Configurar volúmenes para almacenamiento de fotos
-- [ ] Variables de entorno para producción (secrets)
-- [ ] Configurar HTTPS/TLS (nginx reverse proxy o Traefik)
-- [ ] Backup automático de PostgreSQL
+- [x] Dockerizar el backend FastAPI
+- [x] Agregar servicio de backend al `compose.yml`
+- [x] Configurar volúmenes para almacenamiento de fotos
+- [x] Variables de entorno para producción (secrets)
+- [x] Configurar HTTPS/TLS (Railway termina TLS; compose local queda en HTTP)
+- [x] Backup automático de PostgreSQL
 
 ### 8.3 Monitoreo
-- [ ] Logging estructurado (JSON logs)
-- [ ] Health checks y alertas
-- [ ] Métricas de rendimiento del API
+- [x] Logging estructurado (JSON logs)
+- [x] Health checks y alertas
+- [x] Métricas de rendimiento del API
 
 ---
 

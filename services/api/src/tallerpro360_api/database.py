@@ -9,7 +9,11 @@ _db_url = settings.database_url
 if _db_url.startswith("postgresql://"):
     _db_url = _db_url.replace("postgresql://", "postgresql+psycopg://", 1)
 
-engine = create_engine(_db_url, echo=settings.environment == "development")
+engine = create_engine(
+    _db_url,
+    echo=settings.environment == "development",
+    pool_pre_ping=True,
+)
 
 
 def create_db_and_tables() -> None:

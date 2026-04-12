@@ -1,0 +1,52 @@
+name: Backend Health Monitor
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: backend-health-monitor
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  healthcheck:
+    name: Check production backend health
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      BACKEND_HEALTHCHECK_URL: ${{ secrets.BACKEND_HEALTHCHECK_URL }}
+    steps:
+      - name: Validate healthcheck URL secret
+        run: |
+          if [[ -z "${BACKEND_HEALTHCHECK_URL}" ]]; then
+            echo "BACKEND_HEALTHCHECK_URL is not configured" >&2
+            exit 1
+          fi
+
+          echo "BASE_URL=${BACKEND_HEALTHCHECK_URL%/}" >> "$GITHUB_ENV"
+
+      - name: Check /health
+        run: |
+          curl --fail --show-error --silent --location --max-time 20 \
+            --header "Accept: application/json" \
+            "${BASE_URL}/health" > /tmp/backend-health.json
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          payload = json.loads(Path("/tmp/backend-health.json").read_text())
+          if payload.get("status") != "ok":
+              raise SystemExit(f"Unexpected /health payload: {payload}")
+          PY
+
+      - name: Check /metrics
+        run: |
+          curl --fail --show-error --silent --location --max-time 20 \
+            "${BASE_URL}/metrics" > /tmp/backend-metrics.txt
+
+          grep -q "tallerpro360_http_requests_total" /tmp/backend-metrics.txt

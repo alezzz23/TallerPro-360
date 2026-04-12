@@ -13,7 +13,11 @@ build/
 # Environment
 .env
 .env.*
+!.env.example
 
 # IDE
 .vscode/
 .idea/
+
+# Local backups
+infra/backups/

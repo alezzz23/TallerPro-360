@@ -1,0 +1,121 @@
+name: Mobile Release Builds
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: mobile-release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect-platforms:
+    name: Detect mobile platforms
+    runs-on: ubuntu-latest
+    outputs:
+      ios_exists: ${{ steps.detect.outputs.ios_exists }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect iOS project
+        id: detect
+        run: |
+          if [[ -d apps/mobile/ios ]]; then
+            echo "ios_exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ios_exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install mobile dependencies
+        run: flutter pub get
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tallerpro360-android-apk
+          path: apps/mobile/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+
+  ios:
+    name: Build iOS IPA
+    needs: detect-platforms
+    if: needs.detect-platforms.outputs.ios_exists == 'true'
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install mobile dependencies
+        run: flutter pub get
+
+      - name: Build unsigned iOS app
+        run: flutter build ios --release --no-codesign
+
+      - name: Package unsigned IPA
+        run: |
+          app_path="$(find build/ios/iphoneos -maxdepth 1 -name '*.app' | head -n 1)"
+          if [[ -z "$app_path" ]]; then
+            echo "No .app output found after iOS build" >&2
+            exit 1
+          fi
+
+          rm -rf build/ios/ipa
+          mkdir -p build/ios/ipa/Payload
+          cp -R "$app_path" build/ios/ipa/Payload/
+
+          pushd build/ios/ipa >/dev/null
+          zip -qry tallerpro360-ios-unsigned.ipa Payload
+          popd >/dev/null
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tallerpro360-ios-ipa
+          path: apps/mobile/build/ios/ipa/tallerpro360-ios-unsigned.ipa
+          if-no-files-found: error
+
+  ios-skipped:
+    name: Skip iOS build
+    needs: detect-platforms
+    if: needs.detect-platforms.outputs.ios_exists != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain skipped iOS build
+        run: echo "apps/mobile/ios is missing; skipping IPA build without failing the workflow."
