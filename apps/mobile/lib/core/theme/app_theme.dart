@@ -18,6 +18,24 @@ class AppColors {
   static const Color onSurface = Color(0xFF212529);
 }
 
+class AppSpacing {
+  AppSpacing._();
+  static const double xs = 4;
+  static const double sm = 8;
+  static const double md = 16;
+  static const double lg = 24;
+  static const double xl = 32;
+  static const double xxl = 48;
+}
+
+class AppRadius {
+  AppRadius._();
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 20;
+  static const double full = 999;
+}
+
 class AppTheme {
   AppTheme._();
 
@@ -59,6 +77,23 @@ class AppTheme {
         minimumSize: const Size.fromHeight(48),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
+    ),
+    chipTheme: ChipThemeData(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    ),
+    snackBarTheme: const SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+      ),
+    ),
+    dividerTheme: const DividerThemeData(
+      color: Color(0x1F000000),
+      thickness: 1,
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      extendedPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
     ),
   );
 

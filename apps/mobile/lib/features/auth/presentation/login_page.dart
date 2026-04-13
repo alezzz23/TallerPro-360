@@ -45,7 +45,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     final emailPattern = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
     if (!emailPattern.hasMatch(email)) {
-      return 'Ingresa un correo valido.';
+      return 'Ingresa un correo válido.';
     }
 
     return null;
@@ -53,7 +53,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   String? _validatePassword(String? value) {
     if ((value ?? '').isEmpty) {
-      return 'Ingresa tu contrasena.';
+      return 'Ingresa tu contraseña.';
     }
 
     return null;
@@ -77,24 +77,33 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(24),
                   child: AutofillGroup(
-                    child: Form(
-                      key: _formKey,
+                    child: Semantics(
+                      label: 'Formulario de ingreso',
+                      child: Form(
+                        key: _formKey,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Container(
-                            width: 56,
-                            height: 56,
+                            width: 72,
+                            height: 72,
                             decoration: BoxDecoration(
-                              color: colorScheme.primaryContainer,
-                              borderRadius: BorderRadius.circular(16),
+                              gradient: LinearGradient(
+                                colors: [
+                                  colorScheme.primary,
+                                  colorScheme.secondary,
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                             alignment: Alignment.center,
-                            child: Icon(
+                            child: const Icon(
                               Icons.lock_person_rounded,
-                              size: 30,
-                              color: colorScheme.onPrimaryContainer,
+                              size: 36,
+                              color: Colors.white,
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -134,12 +143,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             textInputAction: TextInputAction.done,
                             autofillHints: const [AutofillHints.password],
                             decoration: InputDecoration(
-                              labelText: 'Contrasena',
+                              labelText: 'Contraseña',
                               prefixIcon: const Icon(Icons.password_rounded),
                               suffixIcon: IconButton(
                                 tooltip: _obscurePassword
-                                    ? 'Mostrar contrasena'
-                                    : 'Ocultar contrasena',
+                                    ? 'Mostrar contraseña'
+                                    : 'Ocultar contraseña',
                                 onPressed: () {
                                   setState(() {
                                     _obscurePassword = !_obscurePassword;
@@ -211,6 +220,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ],
                       ),
                     ),
+                  ),
                   ),
                 ),
               ),

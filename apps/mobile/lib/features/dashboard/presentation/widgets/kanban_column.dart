@@ -46,8 +46,10 @@ class KanbanColumn extends StatelessWidget {
       builder: (context, candidateData, rejectedData) {
         final isHighlighted = candidateData.isNotEmpty;
 
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
             color: isHighlighted
                 ? accentColor.withValues(alpha: 0.1)
@@ -62,6 +64,7 @@ class KanbanColumn extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Container(height: 4, color: accentColor),
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
@@ -103,12 +106,23 @@ class KanbanColumn extends StatelessWidget {
                     ? Center(
                         child: Padding(
                           padding: const EdgeInsets.all(16),
-                          child: Text(
-                            'Sin órdenes activas',
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.inbox_outlined,
+                                size: 32,
+                                color: theme.colorScheme.outline,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Sin órdenes',
+                                textAlign: TextAlign.center,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       )
@@ -131,6 +145,7 @@ class KanbanColumn extends StatelessWidget {
                       ),
               ),
             ],
+          ),
           ),
         );
       },

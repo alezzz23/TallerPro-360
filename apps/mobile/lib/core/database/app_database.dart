@@ -96,7 +96,7 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase>
 
   Future<void> markCompleted(int id) =>
       (update(offlineSyncQueue)..where((t) => t.id.equals(id)))
-          .write(const SyncQueueCompanion(completed: Value(true)));
+        .write(const OfflineSyncQueueCompanion(completed: Value(true)));
 
   Future<void> incrementAttemptFor(OfflineSyncQueueData entry, String? reason) async {
     await (update(offlineSyncQueue)..where((t) => t.id.equals(entry.id))).write(

@@ -20,7 +20,13 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final card = _buildCard(context, interactive: true);
+    final card = Semantics(
+      label: 'Orden ${order.displayPlate}, ${order.status.label}',
+      child: _ScaleFeedback(
+        onTap: onTap,
+        child: _buildCard(context),
+      ),
+    );
     if (!draggable) {
       return card;
     }
@@ -33,7 +39,7 @@ class OrderCard extends StatelessWidget {
           width: 280,
           child: Opacity(
             opacity: 0.96,
-            child: _buildCard(context, interactive: false),
+            child: _buildCard(context),
           ),
         ),
       ),
@@ -47,7 +53,7 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCard(BuildContext context, {required bool interactive}) {
+  Widget _buildCard(BuildContext context) {
     final theme = Theme.of(context);
     final accentColor = AppTheme.statusColor(order.status.apiValue);
     final surfaceTint = Color.alphaBlend(
@@ -60,15 +66,13 @@ class OrderCard extends StatelessWidget {
     return Card(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: interactive ? onTap : null,
-        child: Container(
-          decoration: BoxDecoration(
-            color: surfaceTint,
-            border: Border(left: BorderSide(color: accentColor, width: 5)),
-          ),
-          padding: const EdgeInsets.all(14),
-          child: Column(
+      child: Container(
+        decoration: BoxDecoration(
+          color: surfaceTint,
+          border: Border(left: BorderSide(color: accentColor, width: 5)),
+        ),
+        padding: const EdgeInsets.all(14),
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
@@ -164,6 +168,60 @@ class OrderCard extends StatelessWidget {
             ],
           ),
         ),
+    );
+  }
+}
+
+class _ScaleFeedback extends StatefulWidget {
+  const _ScaleFeedback({required this.child, required this.onTap});
+  final Widget child;
+  final VoidCallback? onTap;
+
+  @override
+  State<_ScaleFeedback> createState() => _ScaleFeedbackState();
+}
+
+class _ScaleFeedbackState extends State<_ScaleFeedback>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+      reverseDuration: const Duration(milliseconds: 200),
+    );
+    _scale = Tween<double>(begin: 1.0, end: 0.96).animate(
+      CurvedAnimation(parent: _ctrl, curve: Curves.easeOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  void _onDown(_) => _ctrl.forward();
+  void _onUp(_) => _ctrl.reverse();
+  void _onCancel() => _ctrl.reverse();
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: _onDown,
+      onTapUp: _onUp,
+      onTapCancel: _onCancel,
+      onTap: widget.onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedBuilder(
+        animation: _scale,
+        builder: (context, child) =>
+            Transform.scale(scale: _scale.value, child: child),
+        child: widget.child,
       ),
     );
   }
@@ -175,7 +233,6 @@ class _InfoRow extends StatelessWidget {
     required this.text,
     this.maxLines = 1,
   });
-
   final IconData icon;
   final String text;
   final int maxLines;

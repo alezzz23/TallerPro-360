@@ -85,10 +85,13 @@ class DashboardFilterBar extends StatelessWidget {
                 tooltip: 'Limpiar fecha',
                 icon: const Icon(Icons.clear_rounded),
               ),
-            TextButton.icon(
-              onPressed: filters.hasActiveFilters ? onClearFilters : null,
-              icon: const Icon(Icons.filter_alt_off_rounded),
-              label: const Text('Limpiar filtros'),
+            Semantics(
+              label: 'Limpiar todos los filtros activos',
+              child: TextButton.icon(
+                onPressed: filters.hasActiveFilters ? onClearFilters : null,
+                icon: const Icon(Icons.filter_alt_off_rounded),
+                label: const Text('Limpiar filtros'),
+              ),
             ),
           ],
         ),

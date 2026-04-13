@@ -137,15 +137,18 @@ class DashboardPage extends ConsumerWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      '${state.visibleOrders.length} órdenes activas · Actualizado ${state.refreshedAt.toLocal().toDisplayDateTime()}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                    ),
+                  child: Wrap(
+                    spacing: 8,
+                    children: [
+                      _StatBadge(
+                        icon: Icons.assignment_outlined,
+                        label: '${state.visibleOrders.length} órdenes',
+                      ),
+                      _StatBadge(
+                        icon: Icons.update_rounded,
+                        label: 'Act. ${state.refreshedAt.toLocal().toDisplayDateTime()}',
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(
@@ -494,6 +497,37 @@ class _LegendChip extends StatelessWidget {
             style: theme.textTheme.labelMedium?.copyWith(
               color: color,
               fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatBadge extends StatelessWidget {
+  const _StatBadge({required this.icon, required this.label});
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: theme.colorScheme.onSurfaceVariant),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ],
