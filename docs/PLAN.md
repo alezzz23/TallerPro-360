@@ -141,29 +141,35 @@
 
 ---
 
-## FASE 5 — Frontend Mobile (Flutter)
+## FASE 5 — Frontend Mobile (React Native / Expo)
 
 ### 5.1 Arquitectura y Configuración
-- [ ] Instalar dependencias: `riverpod`, `dio`, `go_router`, `drift`, `freezed`, `json_annotation`
-- [ ] Configurar estructura de carpetas Clean Architecture:
-  - `lib/core/` (theme, constants, utils, network)
-  - `lib/features/` (auth, dashboard, reception, diagnosis, quotation, qc, billing)
-  - `lib/shared/` (widgets, models compartidos)
-- [ ] Configurar tema Material con paleta semántica (Azul=Pendiente, Amarillo=Proceso, Verde=Listo)
-- [ ] Configurar `go_router` con rutas nombradas y guards de autenticación
-- [ ] Cliente HTTP con Dio + interceptor JWT
-- [ ] Configuración de Riverpod como state management
+- [ ] Proyecto Expo con TypeScript (carpeta `Mobile/`)
+- [ ] Instalar dependencias: `expo-router`, `zustand`, `axios`, `expo-secure-store`, `@tanstack/react-query`
+- [ ] Configurar estructura de carpetas:
+  - `app/` (rutas con Expo Router — file-based routing)
+  - `components/` (componentes reutilizables)
+  - `hooks/` (custom hooks)
+  - `constants/` (theme, colores, API URLs)
+  - `services/` (API client, auth, WebSocket)
+  - `stores/` (Zustand stores)
+  - `types/` (TypeScript interfaces/types)
+- [ ] Configurar tema con paleta semántica (Azul=Pendiente, Amarillo=Proceso, Verde=Listo)
+- [ ] Configurar `expo-router` con layouts y guards de autenticación
+- [ ] Cliente HTTP con Axios + interceptor JWT
+- [ ] Configuración de Zustand como state management
+- [ ] Configurar `npx expo start --web` para preview en navegador durante desarrollo
 
 ### 5.2 Autenticación
 - [ ] Pantalla de Login (email + contraseña)
-- [ ] Flujo de JWT: guardar token en secure storage
-- [ ] Guard de navegación (redirigir a login si no hay sesión)
+- [ ] Flujo de JWT: guardar token con `expo-secure-store`
+- [ ] Guard de navegación con `expo-router` (redirigir a login si no hay sesión)
 - [ ] Vista diferenciada por rol al iniciar sesión
 
 ### 5.3 Dashboard (Kanban Board)
 - [ ] Pantalla principal tipo Kanban con columnas: Recepción → Diagnóstico → Aprobación → Reparación → QC → Entrega
 - [ ] Tarjetas de vehículos con color semántico por estado
-- [ ] Drag & drop para mover tarjetas entre fases (con permisos por rol)
+- [ ] Drag & drop para mover tarjetas entre fases (con permisos por rol) — `react-native-draggable-flatlist` o similar
 - [ ] Filtros por técnico, asesor, fecha
 - [ ] Badge de notificaciones no leídas
 
@@ -172,9 +178,9 @@
 - [ ] Autocompletado si el vehículo ya existe (por placa o VIN)
 - [ ] Checklist interactivo de recepción (fluidos, pertenencias, documentos)
 - [ ] Marcado visual de daños en diagrama del vehículo
-- [ ] Captura de fotos de perímetro (4 ángulos obligatorios)
-- [ ] Widget de firma digital del cliente
-- [ ] Dictado por voz para motivo de visita (FR-02)
+- [ ] Captura de fotos de perímetro (4 ángulos obligatorios) — `expo-image-picker`
+- [ ] Componente de firma digital del cliente — `react-native-signature-canvas`
+- [ ] Dictado por voz para motivo de visita (FR-02) — `expo-speech` o Web Speech API
 
 ### 5.5 Diagnóstico (Vista Técnico)
 - [ ] Lista de motivos de ingreso individuales
@@ -186,7 +192,7 @@
 ### 5.6 Cotización y Aprobación
 - [ ] Vista del asesor: agregar costos, cálculo automático de margen e impuestos
 - [ ] Preview de cotización antes de enviar
-- [ ] Botón de enviar cotización por WhatsApp
+- [ ] Botón de enviar cotización por WhatsApp — `expo-linking` con URL whatsapp://
 - [ ] Vista del cliente (web): aprobar/rechazar ítems individualmente
 - [ ] Flujo de descuento y reenvío si el cliente rechaza
 
@@ -203,10 +209,10 @@
 - [ ] Bloqueo de cierre sin NPS completada
 
 ### 5.9 Base de Datos Local (Offline-First)
-- [ ] Configurar Drift (SQLite) para almacenamiento local
+- [ ] Configurar `expo-sqlite` o `@op-engineering/op-sqlite` para almacenamiento local
 - [ ] Tablas espejo de las entidades principales
-- [ ] Cola de sincronización: registrar operaciones offline
-- [ ] Sync engine: enviar cola al servidor al recuperar conexión
+- [ ] Cola de sincronización: registrar operaciones offline con `@tanstack/react-query` mutation queue
+- [ ] Sync engine: enviar cola al servidor al recuperar conexión — `@react-native-community/netinfo`
 - [ ] Resolución de conflictos básica (last-write-wins o CRDTs simplificado)
 
 ---
@@ -214,7 +220,7 @@
 ## FASE 6 — Interfaz Web (Panel Administrativo) (POR DISCUTIR)
 
 ### 6.1 Panel de Repuestos (Asesor de Repuestos)
-- [ ] Decidir framework web (Flutter Web o React)
+- [ ] Decidir framework web (React con Vite o Expo Web)
 - [ ] Dashboard de partes pendientes por solicitar
 - [ ] Gestión de proveedores y cotizaciones de repuestos
 - [ ] Control de inventario (stock)
@@ -241,10 +247,10 @@
 - [ ] Coverage mínimo: 80%
 
 ### 7.2 Mobile
-- [ ] Tests unitarios de providers/viewmodels (Riverpod)
-- [ ] Tests de widgets (formularios, checklist, kanban)
+- [ ] Tests unitarios de stores/hooks (Zustand + React Testing Library)
+- [ ] Tests de componentes (formularios, checklist, kanban) con Jest + RNTL
 - [ ] Tests de integración (flujo login → dashboard → recepción)
-- [ ] Golden tests para consistencia visual
+- [ ] Snapshot tests para consistencia visual
 
 ---
 
@@ -278,7 +284,7 @@
 | **2** | Flujo completo de Órdenes de Servicio | Muy Alta |
 | **3** | Tiempo Real (WebSockets, pg_notify, WhatsApp) | Alta |
 | **4** | Analytics y Auditoría | Media |
-| **5** | Frontend Mobile completo (Flutter) | Muy Alta |
+| **5** | Frontend Mobile completo (React Native / Expo) | Muy Alta |
 | **6** | Interfaz Web (Panel Admin + Portal Cliente) | Alta |
 | **7** | Testing completo | Media |
 | **8** | DevOps y Despliegue | Media |
@@ -306,4 +312,4 @@ Fase 7 (continuo, desde Fase 1)
 Fase 8
 ```
 
-> **Nota:** Fase 5 (Flutter) puede comenzar en paralelo con Fase 2 una vez que Fase 1 esté completa, ya que los endpoints del backend se van construyendo incrementalmente.
+> **Nota:** Fase 5 (React Native / Expo) puede comenzar en paralelo con Fase 2 una vez que Fase 1 esté completa, ya que los endpoints del backend se van construyendo incrementalmente. Preview disponible en navegador con `npx expo start --web`.

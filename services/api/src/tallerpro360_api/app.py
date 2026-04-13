@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session, text
 
@@ -110,6 +111,13 @@ def create_app(*, enable_startup: bool = True) -> FastAPI:
     # AuditMiddleware must be added after routes are registered
     app.add_middleware(AuditMiddleware)
     app.add_middleware(ObservabilityMiddleware)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.allowed_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     return app
 

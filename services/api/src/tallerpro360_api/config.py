@@ -21,6 +21,13 @@ class Settings(BaseSettings):
     log_json: bool = True
     auto_create_tables: bool | None = None
     enable_pg_listener: bool = True
+    allowed_origins: list[str] = [
+        "http://localhost:8081",
+        "http://localhost:19006",
+        "http://localhost:8080",
+        "http://127.0.0.1:8081",
+        "http://127.0.0.1:19006",
+    ]
 
     model_config = SettingsConfigDict(
         env_file=".env",
