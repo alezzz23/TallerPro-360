@@ -10,8 +10,8 @@ import {
 import * as Linking from 'expo-linking';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Radius, Semantic, Shadows, Spacing, StatusColors, TypeScale } from '@/constants/theme';
-import { formatCurrency, formatPercent } from '@/utils/currency';
+import { Radius, Semantic, Shadows, Spacing, TypeScale } from '@/constants/theme';
+import { formatCurrency } from '@/utils/currency';
 import { QuotationItemRow } from '@/components/quotation/quotation-item-row';
 import { DiscountForm } from '@/components/quotation/discount-form';
 import {
@@ -32,12 +32,10 @@ interface QuotationPreviewProps {
 }
 
 const ESTADO_BADGE: Record<QuotationEstado, { bg: string; text: string; label: string }> = {
-  PENDIENTE: { bg: '#1C1C00', text: '#EAB308', label: 'Pendiente' },
-  APROBADA: { bg: '#052E16', text: '#22C55E', label: 'Aprobada' },
-  RECHAZADA: { bg: '#2A1215', text: '#EF4444', label: 'Rechazada' },
+  PENDIENTE: { bg: 'rgba(213,154,47,0.18)', text: '#D59A2F', label: 'Pendiente' },
+  APROBADA: { bg: 'rgba(47,126,115,0.18)', text: '#65B8A6', label: 'Aprobada' },
+  RECHAZADA: { bg: 'rgba(198,90,90,0.18)', text: '#E38A8A', label: 'Rechazada' },
 };
-
-const WHATSAPP_GREEN = '#25D366';
 
 export function QuotationPreview({
   quotation,

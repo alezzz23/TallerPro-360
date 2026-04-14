@@ -9,9 +9,8 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-import { useOrders } from '@/hooks/use-orders';
-import { useVehicle } from '@/hooks/use-orders';
-import { Spacing, StatusColors, TypeScale, Shadows, Radius } from '@/constants/theme';
+import { useOrders, useVehicle } from '@/hooks/use-orders';
+import { Fonts, Radius, Semantic, Shadows, Spacing, StatusColors, TypeScale } from '@/constants/theme';
 import type { ServiceOrder } from '@/types/api';
 
 export default function AssignmentsScreen() {
@@ -21,8 +20,13 @@ export default function AssignmentsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Mis Asignaciones</Text>
-      <Text style={styles.subtitle}>Órdenes en Diagnóstico</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Mis Asignaciones</Text>
+        <View style={styles.countBadge}>
+          <Text style={styles.countBadgeText}>{orders.length}</Text>
+        </View>
+      </View>
+      <Text style={styles.subtitle}>Órdenes listas para diagnóstico</Text>
 
       {isLoading ? (
         <View style={styles.center}>
@@ -43,7 +47,7 @@ export default function AssignmentsScreen() {
           contentContainerStyle={styles.list}
           ListEmptyComponent={
             <View style={styles.center}>
-              <Ionicons name="clipboard-outline" size={48} color="#525252" />
+              <Ionicons name="clipboard-outline" size={48} color={Semantic.textMuted} />
               <Text style={styles.emptyText}>
                 No hay órdenes en diagnóstico
               </Text>
@@ -90,22 +94,44 @@ function AssignmentCard({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: Semantic.background,
     paddingTop: 60,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.sm,
   },
   title: {
     fontSize: TypeScale.title,
-    fontWeight: '800',
-    color: '#F5F5F5',
-    paddingHorizontal: Spacing.lg,
+    fontFamily: Fonts.display,
+    color: Semantic.onSurface,
   },
   subtitle: {
     fontSize: TypeScale.label,
-    color: '#22C55E',
-    fontWeight: '600',
+    color: Semantic.secondary,
+    fontFamily: Fonts.medium,
     paddingHorizontal: Spacing.lg,
     marginTop: Spacing.xs,
     marginBottom: Spacing.md,
+  },
+  countBadge: {
+    minWidth: 40,
+    height: 32,
+    borderRadius: Radius.pill,
+    paddingHorizontal: Spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Semantic.surface,
+    borderWidth: 1,
+    borderColor: Semantic.borderLight,
+  },
+  countBadgeText: {
+    color: Semantic.primary,
+    fontSize: TypeScale.caption,
+    fontFamily: Fonts.bold,
   },
   list: {
     paddingHorizontal: Spacing.md,
@@ -119,25 +145,23 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: TypeScale.body,
-    fontWeight: '600',
-    color: '#525252',
+    fontFamily: Fonts.bold,
+    color: Semantic.textMuted,
     marginTop: Spacing.md,
   },
   card: {
-    backgroundColor: '#161616',
+    backgroundColor: Semantic.surface,
     borderRadius: Radius.lg,
-    borderLeftWidth: 4,
-    borderLeftColor: StatusColors.DIAGNOSTICO,
+    borderWidth: 1,
+    borderColor: Semantic.borderLight,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
-    ...Shadows.extruded,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.06)',
+    ...Shadows.elevated,
   },
   cardPressed: {
     ...Shadows.none,
-    backgroundColor: '#111111',
-    transform: [{ scale: 0.97 }],
+    backgroundColor: Semantic.surfacePress,
+    transform: [{ scale: 0.985 }],
   },
   cardHeader: {
     flexDirection: 'row',
@@ -146,8 +170,8 @@ const styles = StyleSheet.create({
   },
   placa: {
     fontSize: TypeScale.body,
-    fontWeight: '700',
-    color: '#F5F5F5',
+    fontFamily: Fonts.bold,
+    color: Semantic.onSurface,
   },
   statusDot: {
     width: 10,
@@ -157,13 +181,15 @@ const styles = StyleSheet.create({
   },
   vehicleInfo: {
     fontSize: TypeScale.label,
-    color: '#A3A3A3',
+    color: Semantic.secondary,
     marginTop: 2,
+    fontFamily: Fonts.medium,
   },
   motivo: {
     fontSize: TypeScale.caption,
-    color: '#525252',
+    color: Semantic.textMuted,
     marginTop: Spacing.xs,
     lineHeight: 18,
+    fontFamily: Fonts.medium,
   },
 });

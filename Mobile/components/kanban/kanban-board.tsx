@@ -2,7 +2,7 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-nat
 
 import { KanbanColumn } from '@/components/kanban/kanban-column';
 import { KANBAN_STATUSES, STATUS_LABELS } from '@/constants/status';
-import { StatusColors, Spacing, TypeScale } from '@/constants/theme';
+import { Semantic, Spacing, StatusColors, TypeScale } from '@/constants/theme';
 import type { ServiceOrder } from '@/types/api';
 
 interface KanbanBoardProps {
@@ -15,7 +15,7 @@ export function KanbanBoard({ orders, isLoading, isError }: KanbanBoardProps) {
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#22C55E" />
+        <ActivityIndicator size="large" color={Semantic.primary} />
       </View>
     );
   }
@@ -65,6 +65,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: TypeScale.body,
-    color: '#EF4444',
+    color: Semantic.danger,
   },
 });

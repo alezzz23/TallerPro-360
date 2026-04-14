@@ -7,9 +7,9 @@ import { checklistSchema, type ChecklistFormData } from '@/schemas/reception';
 
 const FLUID_LEVELS = ['BAJO', 'MEDIO', 'ALTO'] as const;
 const FLUID_COLORS: Record<string, string> = {
-  BAJO: '#EF4444',
-  MEDIO: '#EAB308',
-  ALTO: '#22C55E',
+  BAJO: Semantic.danger,
+  MEDIO: Semantic.warning,
+  ALTO: Semantic.success,
 };
 
 interface Props {

@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
+import { Fonts, Radius, Semantic, Shadows, Spacing } from '@/constants/theme';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useRoleTabs } from '@/hooks/use-role-tabs';
 
@@ -13,14 +14,32 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#22C55E',
-        tabBarInactiveTintColor: '#525252',
+        tabBarActiveTintColor: Semantic.primary,
+        tabBarInactiveTintColor: Semantic.textMuted,
         headerShown: false,
         tabBarButton: HapticTab,
+        tabBarLabelStyle: {
+          fontFamily: Fonts.medium,
+          fontSize: 11,
+        },
+        tabBarItemStyle: {
+          borderRadius: Radius.lg,
+          marginHorizontal: 4,
+        },
         tabBarStyle: {
-          backgroundColor: '#0A0A0A',
-          borderTopColor: '#2A2A2A',
-          borderTopWidth: 1,
+          position: 'absolute',
+          left: Spacing.md,
+          right: Spacing.md,
+          bottom: Spacing.md,
+          height: 74,
+          paddingTop: 10,
+          paddingBottom: 10,
+          backgroundColor: 'rgba(24,33,44,0.96)',
+          borderWidth: 1,
+          borderColor: Semantic.border,
+          borderTopWidth: 0,
+          borderRadius: Radius.xl,
+          ...Shadows.elevated,
         },
       }}>
       <Tabs.Screen

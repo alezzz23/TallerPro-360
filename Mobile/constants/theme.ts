@@ -1,92 +1,99 @@
 /**
- * Midnight Workshop — monochromatic black + white + green design system.
- * Extruded elements with multi-shadow cards, pill buttons, Ionicons only.
+ * Midnight Atelier — rounded navy, graphite and copper design system.
  */
-
-import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
-    text: '#F5F5F5',
-    background: '#0A0A0A',
-    tint: '#22C55E',
-    icon: '#A3A3A3',
-    tabIconDefault: '#525252',
-    tabIconSelected: '#22C55E',
+    text: '#E8E0D4',
+    background: '#0C1117',
+    tint: '#B87942',
+    icon: '#8A96A6',
+    tabIconDefault: '#6F7A87',
+    tabIconSelected: '#B87942',
   },
   dark: {
-    text: '#F5F5F5',
-    background: '#0A0A0A',
-    tint: '#22C55E',
-    icon: '#A3A3A3',
-    tabIconDefault: '#525252',
-    tabIconSelected: '#22C55E',
+    text: '#E8E0D4',
+    background: '#0C1117',
+    tint: '#B87942',
+    icon: '#8A96A6',
+    tabIconDefault: '#6F7A87',
+    tabIconSelected: '#B87942',
   },
 };
 
 /** Semantic palette — brand & feedback */
 export const Semantic = {
-  primary: '#22C55E',
-  primaryLight: '#4ADE80',
-  primaryDark: '#16A34A',
-  primaryMuted: '#14532D',
-  secondary: '#A3A3A3',
-  success: '#22C55E',
-  warning: '#EAB308',
-  danger: '#EF4444',
-  info: '#3B82F6',
-  surface: '#161616',
-  surfaceElevated: '#1E1E1E',
-  surfacePress: '#111111',
-  onSurface: '#F5F5F5',
-  onPrimary: '#0A0A0A',
-  background: '#0A0A0A',
-  border: '#2A2A2A',
-  borderLight: 'rgba(255,255,255,0.06)',
-  textMuted: '#525252',
+  primary: '#B87942',
+  primaryLight: '#D79760',
+  primaryDark: '#8F592E',
+  primaryMuted: '#263547',
+  secondary: '#95A4B5',
+  success: '#2F7E73',
+  warning: '#D59A2F',
+  danger: '#C65A5A',
+  info: '#5E7B99',
+  surface: '#18212C',
+  surfaceElevated: '#202A36',
+  surfacePress: '#293645',
+  onSurface: '#E8E0D4',
+  onPrimary: '#FFF8F0',
+  background: '#0C1117',
+  backgroundSoft: '#121A24',
+  border: '#2B3948',
+  borderStrong: '#46596D',
+  borderLight: 'rgba(232,224,212,0.08)',
+  textMuted: '#7F8A99',
+  overlay: 'rgba(8,12,18,0.58)',
 } as const;
 
-/** Status colors — green pipeline gradient */
+/** Status colors — cool steel into copper workflow */
 export const StatusColors = {
-  RECEPCION: '#134E2B',
-  DIAGNOSTICO: '#166534',
-  APROBACION: '#15803D',
-  REPARACION: '#16A34A',
-  QC: '#22C55E',
-  ENTREGA: '#4ADE80',
-  CERRADA: '#404040',
+  RECEPCION: '#5D7288',
+  DIAGNOSTICO: '#68819C',
+  APROBACION: '#7B91AA',
+  REPARACION: '#A56E3D',
+  QC: '#B87942',
+  ENTREGA: '#2F7E73',
+  CERRADA: '#4A5562',
 } as const;
 
 /** Role badge colors */
 export const RoleColors = {
-  TECNICO: '#22C55E',
-  ASESOR: '#4ADE80',
-  JEFE_TALLER: '#86EFAC',
-  ADMIN: '#DCFCE7',
+  TECNICO: '#223244',
+  ASESOR: '#35261D',
+  JEFE_TALLER: '#2B313C',
+  ADMIN: '#24303A',
 } as const;
 
 /** Shadow presets */
 export const Shadows = {
+  elevated: {
+    shadowColor: '#04080F',
+    shadowOpacity: 0.32,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 14 },
+    elevation: 14,
+  },
   extruded: {
-    shadowColor: '#000',
-    shadowOpacity: 0.7,
-    shadowRadius: 10,
-    shadowOffset: { width: 4, height: 4 },
-    elevation: 8,
+    shadowColor: '#04080F',
+    shadowOpacity: 0.32,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 14 },
+    elevation: 14,
   },
   soft: {
-    shadowColor: '#000',
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
-    shadowOffset: { width: 2, height: 2 },
-    elevation: 4,
+    shadowColor: '#04080F',
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 6,
   },
   glow: {
-    shadowColor: '#22C55E',
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
+    shadowColor: '#B87942',
+    shadowOpacity: 0.18,
+    shadowRadius: 22,
     shadowOffset: { width: 0, height: 0 },
-    elevation: 6,
+    elevation: 10,
   },
   none: {
     shadowColor: 'transparent',
@@ -99,10 +106,10 @@ export const Shadows = {
 
 /** Border radius scale */
 export const Radius = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 20,
+  sm: 12,
+  md: 18,
+  lg: 24,
+  xl: 32,
   pill: 999,
 } as const;
 
@@ -113,7 +120,7 @@ export const Spacing = {
   md: 16,
   lg: 24,
   xl: 32,
-  xxl: 48,
+  xxl: 56,
 } as const;
 
 /** Typography sizes (minimum 16 body for mobile, see ui-ux skill §6) */
@@ -121,32 +128,14 @@ export const TypeScale = {
   caption: 12,
   label: 14,
   body: 16,
-  subtitle: 18,
-  title: 24,
-  headline: 32,
+  subtitle: 20,
+  title: 28,
+  headline: 40,
 } as const;
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
-});
+export const Fonts = {
+  regular: 'Nunito_400Regular',
+  medium: 'Nunito_600SemiBold',
+  bold: 'Nunito_700Bold',
+  display: 'Nunito_800ExtraBold',
+} as const;

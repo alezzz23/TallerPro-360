@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { KANBAN_STATUSES, STATUS_LABELS } from '@/constants/status';
-import { StatusColors, Spacing, TypeScale, Shadows, Radius } from '@/constants/theme';
+import { Fonts, Radius, Semantic, Shadows, Spacing, StatusColors, TypeScale } from '@/constants/theme';
 import type { ServiceOrderStatus } from '@/types/api';
 
 type DateFilter = 'all' | 'today' | 'week' | 'month';
@@ -116,27 +116,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: Radius.pill,
-    backgroundColor: '#161616',
+    backgroundColor: Semantic.surface,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: Semantic.border,
     ...Shadows.soft,
   },
   chipActive: {
-    backgroundColor: '#22C55E',
+    backgroundColor: Semantic.primary,
     borderColor: 'transparent',
     ...Shadows.none,
   },
   chipActivePrimary: {
-    backgroundColor: '#22C55E',
+    backgroundColor: Semantic.primary,
     borderColor: 'transparent',
     ...Shadows.none,
   },
   chipText: {
     fontSize: TypeScale.caption,
-    fontWeight: '600',
-    color: '#A3A3A3',
+    fontFamily: Fonts.medium,
+    color: Semantic.secondary,
   },
   chipTextActive: {
-    color: '#0A0A0A',
+    color: Semantic.onPrimary,
+    fontFamily: Fonts.bold,
   },
 });

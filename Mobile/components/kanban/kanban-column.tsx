@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { OrderCard } from '@/components/kanban/order-card';
-import { Spacing, TypeScale } from '@/constants/theme';
+import { Fonts, Radius, Semantic, Spacing, TypeScale } from '@/constants/theme';
 import type { ServiceOrder } from '@/types/api';
 
 interface KanbanColumnProps {
@@ -47,9 +47,11 @@ const styles = StyleSheet.create({
   column: {
     width: COLUMN_WIDTH,
     marginRight: Spacing.md,
-    backgroundColor: '#0F0F0F',
-    borderRadius: 12,
+    backgroundColor: Semantic.backgroundSoft,
+    borderRadius: Radius.lg,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: Semantic.border,
   },
   accentBar: {
     height: 4,
@@ -64,8 +66,8 @@ const styles = StyleSheet.create({
   },
   headerLabel: {
     fontSize: TypeScale.label,
-    fontWeight: '700',
-    color: '#F5F5F5',
+    fontFamily: Fonts.bold,
+    color: Semantic.onSurface,
   },
   countBadge: {
     minWidth: 24,
@@ -77,8 +79,8 @@ const styles = StyleSheet.create({
   },
   countText: {
     fontSize: TypeScale.caption,
-    fontWeight: '700',
-    color: '#0A0A0A',
+    fontFamily: Fonts.bold,
+    color: Semantic.onPrimary,
   },
   cardList: {
     flex: 1,
@@ -89,15 +91,16 @@ const styles = StyleSheet.create({
   },
   emptyState: {
     borderWidth: 1.5,
-    borderColor: '#2A2A2A',
+    borderColor: Semantic.border,
     borderStyle: 'dashed',
-    borderRadius: 10,
+    borderRadius: Radius.md,
     padding: Spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
   },
   emptyText: {
     fontSize: TypeScale.label,
-    color: '#525252',
+    color: Semantic.textMuted,
+    fontFamily: Fonts.medium,
   },
 });

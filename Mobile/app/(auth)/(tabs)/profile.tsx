@@ -1,8 +1,9 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 import { useAuthStore } from '@/stores/auth-store';
-import { RoleColors, Semantic, Spacing, TypeScale, Shadows, Radius } from '@/constants/theme';
+import { Fonts, Radius, RoleColors, Semantic, Shadows, Spacing, TypeScale } from '@/constants/theme';
 
 const ROLE_LABELS: Record<string, string> = {
   TECNICO: 'Técnico',
@@ -23,18 +24,16 @@ export default function ProfileScreen() {
 
   const roleColor = user ? RoleColors[user.rol] : Semantic.secondary;
   const roleLabel = user ? ROLE_LABELS[user.rol] ?? user.rol : '';
+  const initial = user?.nombre?.charAt(0)?.toUpperCase() ?? '?';
 
   return (
     <View style={styles.container}>
-      <Text style={styles.screenTitle}>Perfil</Text>
-
       <View style={styles.card}>
         <View style={styles.avatar}>
-          <Text style={styles.avatarText}>
-            {user?.nombre?.charAt(0)?.toUpperCase() ?? '?'}
-          </Text>
+          <Text style={styles.avatarText}>{initial}</Text>
         </View>
 
+        <Text style={styles.screenTitle}>Perfil</Text>
         <Text style={styles.name}>{user?.nombre ?? '—'}</Text>
         <Text style={styles.email}>{user?.email ?? '—'}</Text>
 
@@ -45,12 +44,18 @@ export default function ProfileScreen() {
 
       <View style={styles.infoSection}>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>ID</Text>
+          <View style={styles.infoLabelRow}>
+            <Ionicons name="finger-print-outline" size={16} color={Semantic.secondary} />
+            <Text style={styles.infoLabel}>ID</Text>
+          </View>
           <Text style={styles.infoValue}>{user?.id?.slice(0, 8) ?? '—'}...</Text>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Estado</Text>
-          <Text style={[styles.infoValue, { color: user?.activo ? '#22C55E' : Semantic.danger }]}>
+          <View style={styles.infoLabelRow}>
+            <Ionicons name="pulse-outline" size={16} color={Semantic.secondary} />
+            <Text style={styles.infoLabel}>Estado</Text>
+          </View>
+          <Text style={[styles.infoValue, { color: user?.activo ? Semantic.success : Semantic.danger }]}> 
             {user?.activo ? 'Activo' : 'Inactivo'}
           </Text>
         </View>
@@ -74,48 +79,49 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: Spacing.lg,
     paddingTop: 60,
-    backgroundColor: '#0A0A0A',
-  },
-  screenTitle: {
-    fontSize: TypeScale.title,
-    fontWeight: '700',
-    color: '#F5F5F5',
+    backgroundColor: Semantic.background,
   },
   card: {
     alignItems: 'center',
-    backgroundColor: '#161616',
-    borderRadius: Radius.lg,
+    backgroundColor: Semantic.surface,
+    borderRadius: Radius.xl,
     padding: Spacing.lg,
-    marginTop: Spacing.lg,
-    ...Shadows.extruded,
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.06)',
-    borderLeftColor: 'rgba(255,255,255,0.06)',
+    ...Shadows.elevated,
+    borderWidth: 1,
+    borderColor: Semantic.borderLight,
   },
   avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#22C55E',
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: Semantic.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.md,
     ...Shadows.glow,
   },
   avatarText: {
-    color: '#0A0A0A',
+    color: Semantic.onPrimary,
     fontSize: TypeScale.title,
-    fontWeight: '700',
+    fontFamily: Fonts.display,
+  },
+  screenTitle: {
+    fontSize: TypeScale.caption,
+    fontFamily: Fonts.bold,
+    color: Semantic.primary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    marginBottom: Spacing.xs,
   },
   name: {
     fontSize: TypeScale.subtitle,
-    fontWeight: '600',
-    color: '#F5F5F5',
+    fontFamily: Fonts.bold,
+    color: Semantic.onSurface,
   },
   email: {
     fontSize: TypeScale.body,
-    color: '#A3A3A3',
+    color: Semantic.secondary,
+    fontFamily: Fonts.medium,
     marginTop: Spacing.xs,
     marginBottom: Spacing.md,
   },
@@ -125,34 +131,39 @@ const styles = StyleSheet.create({
     borderRadius: Radius.pill,
   },
   roleBadgeText: {
-    color: '#0A0A0A',
+    color: Semantic.onSurface,
     fontSize: TypeScale.label,
-    fontWeight: '600',
+    fontFamily: Fonts.bold,
   },
   infoSection: {
-    backgroundColor: '#161616',
-    borderRadius: Radius.lg,
+    backgroundColor: Semantic.surface,
+    borderRadius: Radius.xl,
     padding: Spacing.md,
     marginTop: Spacing.md,
-    ...Shadows.extruded,
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.06)',
-    borderLeftColor: 'rgba(255,255,255,0.06)',
+    ...Shadows.elevated,
+    borderWidth: 1,
+    borderColor: Semantic.borderLight,
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingVertical: Spacing.sm,
+  },
+  infoLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
   },
   infoLabel: {
     fontSize: TypeScale.body,
-    color: '#A3A3A3',
+    color: Semantic.secondary,
+    fontFamily: Fonts.medium,
   },
   infoValue: {
     fontSize: TypeScale.body,
-    color: '#F5F5F5',
-    fontWeight: '500',
+    color: Semantic.onSurface,
+    fontFamily: Fonts.bold,
   },
   logoutButton: {
     height: 48,
@@ -161,16 +172,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.xl,
-    ...Shadows.extruded,
+    ...Shadows.elevated,
   },
   logoutButtonPressed: {
     ...Shadows.none,
-    backgroundColor: '#DC2626',
-    transform: [{ scale: 0.97 }],
+    backgroundColor: '#A34444',
+    transform: [{ scale: 0.985 }],
   },
   logoutText: {
-    color: '#FFFFFF',
+    color: Semantic.onPrimary,
     fontSize: TypeScale.body,
-    fontWeight: '600',
+    fontFamily: Fonts.bold,
   },
 });

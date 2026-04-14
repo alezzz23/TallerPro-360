@@ -1,11 +1,12 @@
 import { useCallback, useMemo, useState } from 'react';
 import { RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import { KanbanBoard } from '@/components/kanban/kanban-board';
 import { FilterBar } from '@/components/kanban/filter-bar';
 import type { FilterState } from '@/components/kanban/filter-bar';
 import { useOrders } from '@/hooks/use-orders';
-import { Spacing, TypeScale } from '@/constants/theme';
+import { Fonts, Radius, Semantic, Shadows, Spacing, TypeScale } from '@/constants/theme';
 import type { OrderFilters } from '@/services/orders';
 
 function buildApiFilters(filters: FilterState): OrderFilters {
@@ -56,23 +57,24 @@ export default function OrdersScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Órdenes</Text>
+        <View style={styles.headerCopy}>
+          <Text style={styles.title}>Órdenes</Text>
+          <Text style={styles.subtitle}>Vista operativa del taller en tiempo real</Text>
+        </View>
         <View style={styles.badge}>
+          <Ionicons name="layers-outline" size={14} color={Semantic.primary} />
           <Text style={styles.badgeText}>{data?.total ?? 0}</Text>
         </View>
       </View>
 
-      {/* Filters */}
       <FilterBar filters={filters} onChange={setFilters} />
 
-      {/* Kanban */}
       <View style={styles.boardWrapper}>
         <RefreshControl
           refreshing={isRefetching}
           onRefresh={onRefresh}
-          tintColor="#22C55E"
+          tintColor={Semantic.primary}
         />
         <KanbanBoard
           orders={orders}
@@ -88,34 +90,51 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 60,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: Semantic.background,
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg,
     gap: Spacing.sm,
+    paddingBottom: Spacing.md,
+  },
+  headerCopy: {
+    flex: 1,
   },
   title: {
     fontSize: TypeScale.title,
-    fontWeight: '700',
-    color: '#F5F5F5',
+    fontFamily: Fonts.display,
+    color: Semantic.onSurface,
+  },
+  subtitle: {
+    marginTop: Spacing.xs,
+    fontSize: TypeScale.label,
+    color: Semantic.textMuted,
+    fontFamily: Fonts.medium,
   },
   badge: {
-    backgroundColor: '#161616',
-    minWidth: 28,
-    height: 28,
-    borderRadius: 14,
+    backgroundColor: Semantic.surface,
+    minWidth: 56,
+    height: 34,
+    borderRadius: Radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+    gap: Spacing.xs,
     paddingHorizontal: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Semantic.borderLight,
+    ...Shadows.soft,
   },
   badgeText: {
-    color: '#22C55E',
+    color: Semantic.primary,
     fontSize: TypeScale.caption,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
   boardWrapper: {
     flex: 1,
+    paddingTop: Spacing.xs,
   },
 });

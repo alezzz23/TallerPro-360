@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 
 import { useVehicle } from '@/hooks/use-orders';
 import { useOrderQuotation } from '@/hooks/use-quotations';
-import { StatusColors, Spacing, TypeScale, Shadows, Radius } from '@/constants/theme';
+import { Fonts, Radius, Semantic, Shadows, Spacing, StatusColors, TypeScale } from '@/constants/theme';
 import type { ServiceOrder } from '@/types/api';
 
 interface OrderCardProps {
@@ -54,6 +54,8 @@ export function OrderCard({ order }: OrderCardProps) {
       ]}
       onPress={handlePress}
     >
+      <View style={[styles.accentStripe, { backgroundColor: statusColor }]} />
+
       <View style={styles.header}>
         <Text style={styles.placa} numberOfLines={1}>
           {vehicle?.placa ?? '···'}
@@ -80,19 +82,24 @@ export function OrderCard({ order }: OrderCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#161616',
+    backgroundColor: Semantic.surface,
     borderRadius: Radius.lg,
-    borderLeftWidth: 4,
+    borderWidth: 1,
+    borderColor: Semantic.borderLight,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
-    ...Shadows.extruded,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.06)',
+    ...Shadows.elevated,
   },
   cardPressed: {
     ...Shadows.none,
-    backgroundColor: '#111111',
-    transform: [{ scale: 0.97 }],
+    backgroundColor: Semantic.surfacePress,
+    transform: [{ scale: 0.985 }],
+  },
+  accentStripe: {
+    width: 42,
+    height: 4,
+    borderRadius: Radius.pill,
+    marginBottom: Spacing.md,
   },
   header: {
     flexDirection: 'row',
@@ -101,8 +108,8 @@ const styles = StyleSheet.create({
   },
   placa: {
     fontSize: TypeScale.body,
-    fontWeight: '700',
-    color: '#F5F5F5',
+    fontFamily: Fonts.bold,
+    color: Semantic.onSurface,
     flexShrink: 1,
   },
   dot: {
@@ -113,19 +120,22 @@ const styles = StyleSheet.create({
   },
   vehicleInfo: {
     fontSize: TypeScale.label,
-    color: '#A3A3A3',
+    color: Semantic.secondary,
     marginTop: 2,
+    fontFamily: Fonts.medium,
   },
   motivo: {
     fontSize: TypeScale.caption,
-    color: '#525252',
+    color: Semantic.textMuted,
     marginTop: Spacing.xs,
     lineHeight: 18,
+    fontFamily: Fonts.medium,
   },
   time: {
     fontSize: TypeScale.caption,
-    color: '#525252',
+    color: Semantic.textMuted,
     marginTop: Spacing.xs,
     textAlign: 'right',
+    fontFamily: Fonts.medium,
   },
 });

@@ -11,7 +11,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useOrders, useVehicle } from '@/hooks/use-orders';
-import { Spacing, StatusColors, TypeScale, Shadows, Radius } from '@/constants/theme';
+import { Fonts, Radius, Semantic, Shadows, Spacing, StatusColors, TypeScale } from '@/constants/theme';
 import type { ServiceOrder } from '@/types/api';
 
 function OrderRow({ order }: { order: ServiceOrder }) {
@@ -83,7 +83,7 @@ export default function QCScreen() {
           contentContainerStyle={styles.list}
           ListEmptyComponent={
             <View style={styles.center}>
-              <Ionicons name="shield-checkmark-outline" size={48} color="#525252" />
+              <Ionicons name="shield-checkmark-outline" size={48} color={Semantic.textMuted} />
               <Text style={styles.emptyText}>No hay órdenes pendientes de QC</Text>
               <Text style={styles.emptyHint}>
                 Las órdenes en Reparación aparecerán aquí
@@ -99,45 +99,44 @@ export default function QCScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: Semantic.background,
   },
   headerSection: {
     paddingTop: 60,
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.md,
-    backgroundColor: '#161616',
+    backgroundColor: Semantic.surface,
     borderBottomWidth: 1,
-    borderBottomColor: '#2A2A2A',
+    borderBottomColor: Semantic.border,
   },
   title: {
     fontSize: TypeScale.title,
-    fontWeight: '800',
-    color: '#F5F5F5',
+    fontFamily: Fonts.display,
+    color: Semantic.onSurface,
   },
   subtitle: {
     fontSize: TypeScale.label,
-    color: '#A3A3A3',
+    color: Semantic.secondary,
     marginTop: 4,
+    fontFamily: Fonts.medium,
   },
   list: {
     padding: Spacing.md,
     paddingBottom: Spacing.xxl,
   },
   card: {
-    backgroundColor: '#161616',
+    backgroundColor: Semantic.surface,
     borderRadius: Radius.lg,
-    borderLeftWidth: 4,
-    borderLeftColor: StatusColors.QC,
+    borderWidth: 1,
+    borderColor: Semantic.borderLight,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
-    ...Shadows.extruded,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.06)',
+    ...Shadows.elevated,
   },
   cardPressed: {
     ...Shadows.none,
-    backgroundColor: '#111111',
-    transform: [{ scale: 0.97 }],
+    backgroundColor: Semantic.surfacePress,
+    transform: [{ scale: 0.985 }],
   },
   cardHeader: {
     flexDirection: 'row',
@@ -151,8 +150,8 @@ const styles = StyleSheet.create({
   },
   placa: {
     fontSize: TypeScale.body,
-    fontWeight: '700',
-    color: '#F5F5F5',
+    fontFamily: Fonts.bold,
+    color: Semantic.onSurface,
     flex: 1,
   },
   tag: {
@@ -161,27 +160,29 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   tagPending: {
-    backgroundColor: '#14532D',
+    backgroundColor: Semantic.primaryMuted,
   },
   tagQC: {
-    backgroundColor: '#166534',
+    backgroundColor: 'rgba(47,126,115,0.18)',
   },
   tagText: {
     fontSize: TypeScale.caption,
-    fontWeight: '700',
-    color: '#F5F5F5',
+    fontFamily: Fonts.bold,
+    color: Semantic.onSurface,
   },
   vehicleInfo: {
     fontSize: TypeScale.label,
-    color: '#A3A3A3',
+    color: Semantic.secondary,
     marginTop: 4,
     marginLeft: 18,
+    fontFamily: Fonts.medium,
   },
   motivo: {
     fontSize: TypeScale.caption,
-    color: '#525252',
+    color: Semantic.textMuted,
     marginTop: Spacing.xs,
     marginLeft: 18,
+    fontFamily: Fonts.medium,
   },
   center: {
     flex: 1,
@@ -191,15 +192,16 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: TypeScale.body,
-    fontWeight: '600',
-    color: '#525252',
+    fontFamily: Fonts.bold,
+    color: Semantic.textMuted,
     textAlign: 'center',
     marginTop: Spacing.md,
   },
   emptyHint: {
     fontSize: TypeScale.label,
-    color: '#525252',
+    color: Semantic.textMuted,
     textAlign: 'center',
     marginTop: Spacing.xs,
+    fontFamily: Fonts.medium,
   },
 });

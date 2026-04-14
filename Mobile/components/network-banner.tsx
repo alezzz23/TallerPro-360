@@ -4,10 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { useNetworkStore } from '@/stores/network-store';
 import { getSyncQueueCount } from '@/services/offline-db';
-import { Spacing, TypeScale } from '@/constants/theme';
+import { Fonts, Semantic, Spacing, TypeScale } from '@/constants/theme';
 
-const BANNER_BG = '#161616';
-const BANNER_TEXT = '#22C55E';
+const BANNER_BG = '#18212C';
+const BANNER_TEXT = Semantic.primary;
 const BANNER_HEIGHT = 44;
 
 export function NetworkBanner() {
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
     justifyContent: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#22C55E',
+    borderBottomColor: Semantic.borderStrong,
   },
   inner: {
     flexDirection: 'row',
@@ -67,6 +67,6 @@ const styles = StyleSheet.create({
   text: {
     color: BANNER_TEXT,
     fontSize: TypeScale.label,
-    fontWeight: '600',
+    fontFamily: Fonts.bold,
   },
 });

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Semantic, Radius, Shadows, Spacing, StatusColors, TypeScale } from '@/constants/theme';
+import { Fonts, Semantic, Radius, Shadows, Spacing, TypeScale } from '@/constants/theme';
 import { formatCurrency } from '@/utils/currency';
 import type { Quotation, QuotationEstado } from '@/types/api';
 
@@ -9,9 +9,9 @@ interface QuotationSummaryCardProps {
 }
 
 const ESTADO_BADGE: Record<QuotationEstado, { bg: string; text: string }> = {
-  PENDIENTE: { bg: '#1C1C00', text: '#EAB308' },
-  APROBADA: { bg: '#052E16', text: '#22C55E' },
-  RECHAZADA: { bg: '#2A1215', text: '#EF4444' },
+  PENDIENTE: { bg: 'rgba(213,154,47,0.18)', text: '#D59A2F' },
+  APROBADA: { bg: 'rgba(47,126,115,0.18)', text: '#65B8A6' },
+  RECHAZADA: { bg: 'rgba(198,90,90,0.18)', text: '#E38A8A' },
 };
 
 export function QuotationSummaryCard({ quotation }: QuotationSummaryCardProps) {
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: TypeScale.label,
-    fontWeight: '600',
+    fontFamily: Fonts.medium,
     color: Semantic.secondary,
   },
   badge: {
@@ -67,16 +67,17 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: TypeScale.caption,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
   total: {
     fontSize: TypeScale.title,
-    fontWeight: '800',
+    fontFamily: Fonts.display,
     color: Semantic.primary,
   },
   meta: {
     fontSize: TypeScale.caption,
     color: Semantic.textMuted,
     marginTop: 2,
+    fontFamily: Fonts.medium,
   },
 });

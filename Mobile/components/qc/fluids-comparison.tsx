@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { Radius, Semantic, Shadows, Spacing, StatusColors, TypeScale } from '@/constants/theme';
+import { Radius, Semantic, Shadows, Spacing, TypeScale } from '@/constants/theme';
 import { FLUID_LEVELS, type FluidLevel } from '@/schemas/qc';
 import type { ReceptionChecklist } from '@/types/api';
 
@@ -19,9 +19,9 @@ interface FluidsComparisonProps {
 }
 
 const LEVEL_COLORS: Record<string, string> = {
-  BAJO: '#EF4444',
-  MEDIO: '#EAB308',
-  ALTO: '#22C55E',
+  BAJO: Semantic.danger,
+  MEDIO: Semantic.warning,
+  ALTO: Semantic.success,
 };
 
 function LevelBadge({ level }: { level: string | null | undefined }) {
